@@ -1,21 +1,62 @@
-function addUser() {
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    var dob = document.getElementById('dob').value;
-    var termsAccepted = document.getElementById('terms').checked;
-    var table = document.getElementById('userTable').getElementsByTagName('tbody')[0];
-    var newRow = table.insertRow(table.rows.length);
-    var cell1 = newRow.insertCell(0);
-    var cell2 = newRow.insertCell(1);
-    var cell3 = newRow.insertCell(2);
-    var cell4 = newRow.insertCell(3);
-    var cell5 = newRow.insertCell(4);
-    cell1.textContent = name;
-    cell2.textContent = email;
-    cell3.textContent = password;
-    cell4.textContent = dob;
-    cell5.textContent = termsAccepted ? 'Yes' : 'No';
-    document.getElementById('registrationForm').reset();
+let userForm=document.getElementById("user.Form");
+
+const retrieveEntries = () => {
+   let entries = localStorage.getItem("user-entries");
+   if (entries) {
+    entries=JSON.parse(entries);
+   } else {
+    entries=[];
+   }
+   return entries;
 }
+let userEntries=retrieveEntries();
+
+const displayEntries = () => {
+    const entries= retrieveEntries();
+const tableEntries=entries.map((entry) => {
+    const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
+    const emailCell = `<td class='border pX-4 py-2'>${entry.email}</td>`;
+    const passwordCell =`<td class='border px-4 py-2'>${entry.password} </td>`;
+    const dobCell = `<td class='border px-4 py-2'>${entry.dob}</td>` ;
+    const acceptTermsCell = `<td class='border px-4 py-2'>${entry.acceptedTermsAndconditions}</td>`;
+
+    const row = `<tr>${nameCell} ${emailCell} ${passwordCell} ${dobCell} ${acceptTermsCell}</tr>`; 
+    return row;
+    }).join("\n");
+
+    const table = `<table class="table-auto w-full"><tr>
+    <th class="px-4 py-2">Name</th> 
+    <th class="px-4 py-2">Email</th> 
+    <th class="px-4 py-2">PassWord</th> 
+    <th class="px-4 py-2">Dob</th> 
+    <th class="px-4 py-2">Accepted terms?</th> 
+</tr>${tableEntries} </table>`;
+let details = document.getElementById("user-entries");
+details.innerHTML = table;
+}
+const saveUserForm = (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const dob = document.getElementById("dob").value;
+    
+    const acceptedTermsAndconditions= document.getElementById("acceptTerms").checked;
+    const entry = {
+        name,
+        email,
+        password,
+        dob,
+        acceptedTermsAndconditions,
+    };
+
+    userEntries.push(entry);
+
+    localStorage.setItem("user-entries",JSON.stringify(userEntries));
+    displayEntries();
+   
+}
+userForm.addEventListener("submit",saveUserForm);
+displayEntries();
+
 
